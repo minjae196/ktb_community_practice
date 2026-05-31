@@ -35,6 +35,16 @@ public class MemoryUserRepository implements UserRepository {
     }
 
     @Override
+    public UserDto findByEmail(String email){
+        for(UserDto user: users){
+            if(user.getUserEmail().equals(email)){
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public boolean existByUserId(String id){
         for(UserDto user:users){
             if(user.getUserId().equals(id)){

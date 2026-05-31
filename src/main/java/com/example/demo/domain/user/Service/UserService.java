@@ -32,7 +32,7 @@ public class UserService {
         userRepository.deleteUser(id);
     }
 
-    public UserDto upadateUserInfo(String userId, UserDto updateDto){
+    public UserDto updateUserInfo(String userId, UserDto updateDto){
         UserDto existingUser = userRepository.findByUserId(userId);
         if(existingUser == null){
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
@@ -56,5 +56,14 @@ public class UserService {
 
         existingUser.setUserPassword(newPassword);
         userRepository.updatePassword(existingUser);
+    }
+
+    public UserDto login(String email, String password){
+        UserDto user = userRepository.findByEmail(email);
+
+        if(user == null || !user.getUserPassword().equals(password)){
+            return null;
+        }
+        return user;
     }
 }
