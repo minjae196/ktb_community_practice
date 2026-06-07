@@ -36,7 +36,7 @@ public class User {
     public void updateNickname(String nickname){
         this.nickname = nickname;
     }
-    public void updateProfileImage(String profileImage){
+    public void updateProfileImage(String profileImageUrl){
         this.profileImageUrl = profileImageUrl;
     }
 

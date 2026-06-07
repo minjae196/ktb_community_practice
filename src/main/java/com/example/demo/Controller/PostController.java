@@ -60,8 +60,10 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public String deletePost(@PathVariable Long postId){
-        postService.deletePost(postId);
+    public String deletePost(@PathVariable Long postId,
+                             @SessionAttribute(name = "Login_user", required = false) Long loginUserId
+    ){
+        postService.deletePost(postId, loginUserId);
 
         return "게시물 삭제 성공";
     }

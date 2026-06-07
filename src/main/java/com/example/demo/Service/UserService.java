@@ -16,7 +16,7 @@ public class UserService {
 
     @Transactional
     public void SignUp(SignupRequestDto requestDto){
-       if(userRepository.existByEmail(requestDto.getEmail())){
+       if(userRepository.existsByEmail(requestDto.getEmail())){
            throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
        }
        if (!requestDto.getPassword().equals(requestDto.getPasswordCheck())){
