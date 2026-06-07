@@ -4,14 +4,9 @@ import com.example.demo.Entity.User;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.dto.SignupRequestDto;
 import com.example.demo.dto.UpdatedRequestDto;
-import com.example.demo.dto.UserDto;
-import com.example.demo.Repository.UserRepositoryBefore;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
