@@ -1,3 +1,21 @@
 spring:
-  application:
-    name: demo
+  datasource:
+    url: jdbc:mysql://localhost:3306/jpa_practice?serverTimezone=UTC&useSSL=false
+    username: root
+    password: sem2690@naver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create   # 개발 중에는 create / create-drop / update 중 선택
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+  profiles:
+    active: dev
+
+logging:
+  level:
+    org.hibernate.SQL: debug

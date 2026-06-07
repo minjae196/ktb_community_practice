@@ -1,10 +1,10 @@
-package com.example.demo.domain.user.Repository;
+package com.example.demo.Repository;
 
-import com.example.demo.domain.user.Dto.UserDto;
+import com.example.demo.dto.UserDto;
 
 import java.util.List;
 
-public interface UserRepository {
+public interface UserRepositoryBefore {
     UserDto insertUser(UserDto user);
     UserDto findByUserId(String id);
     UserDto findByEmail(String email);

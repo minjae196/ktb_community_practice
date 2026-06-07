@@ -1,13 +1,13 @@
-package com.example.demo.domain.user.Repository;
+package com.example.demo.Repository;
 
-import com.example.demo.domain.user.Dto.UserDto;
+import com.example.demo.dto.UserDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 
 
 @Repository
-public class MemoryUserRepository implements UserRepository {
+public class MemoryUserRepositoryBefore implements UserRepositoryBefore {
 
     static public ArrayList<UserDto> users;
 
