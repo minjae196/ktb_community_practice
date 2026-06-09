@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false)
     private String title;
@@ -23,8 +23,6 @@ public class Post {
     @Lob
     @Column(nullable = false)
     private String body;
-
-    private String postImageUrl;
 
     @CreatedDate
     @Column(updatable = false)
@@ -37,18 +35,20 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Count count;
+
+
     @Builder
-    public Post(String title, String body, String postImageUrl,User user){
+    public Post(String title, String body,User user){
         this.title = title;
         this.body = body;
-        this.postImageUrl = postImageUrl;
         this.user = user;
     }
 
-    public void updatePost(String title, String body, String postImageUrl) {
+    public void updatePost(String title, String body) {
         this.title = title;
         this.body = body;
-        this.postImageUrl = postImageUrl;
     }
 
 }

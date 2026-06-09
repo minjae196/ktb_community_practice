@@ -2,6 +2,7 @@ package com.example.demo.Entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class Count {
 
     @Id
-    @Column(name = "postId")
     private Integer postId;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -28,4 +28,11 @@ public class Count {
     @Column(nullable = false)
     private int likeCount = 0;
 
+    @Builder
+    public Count(Post post, int viewCount, int replyCount, int likeCount){
+        this.post = post;
+        this.viewCount = viewCount;
+        this.replyCount = replyCount;
+        this.likeCount = likeCount;
+    }
 }

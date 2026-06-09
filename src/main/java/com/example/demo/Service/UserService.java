@@ -35,14 +35,14 @@ public class UserService {
 
     //유저 삭제
     @Transactional
-    public void deleteUser(Long id){
+    public void deleteUser(Integer id){
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         userRepository.delete(user);
     }
 
     //유저정보 수정
     @Transactional
-    public void updateUserInfo(Long id, UpdatedRequestDto updatedto){
+    public void updateUserInfo(Integer id, UpdatedRequestDto updatedto){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
@@ -52,7 +52,7 @@ public class UserService {
 
     //비밀번호 수
     @Transactional
-    public void updateUserPassword(Long id, UpdatedRequestDto updatedto){
+    public void updateUserPassword(Integer id, UpdatedRequestDto updatedto){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
@@ -64,7 +64,7 @@ public class UserService {
     }
 
 
-    public Long login(String email, String password){
+    public Integer login(String email, String password){
         User user = userRepository.findByEmail(email)
                 .orElse(null);
 

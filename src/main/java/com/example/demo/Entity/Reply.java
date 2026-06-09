@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Reply {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reply_id")
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false)
     private String comment;

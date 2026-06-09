@@ -9,5 +9,5 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class PostLikeId implements Serializable {
     private Integer user;
-    private Long post;
+    private Integer post;
 }

@@ -20,7 +20,7 @@ public class PostController {
     @PostMapping()
     public String createPost(
             @RequestBody PostRequestDto requestDto,
-            @SessionAttribute(name = "Login_user") Long loginUserId) {
+            @SessionAttribute(name = "Login_user") Integer loginUserId) {
 
         postService.createPost(requestDto, loginUserId);
 
@@ -29,25 +29,25 @@ public class PostController {
 
     @GetMapping()
     public Slice<PostResponseDto> getPosts(
-            @RequestParam(value = "lastId", required = false) Long lastId,
+            @RequestParam(value = "lastId", required = false) Integer lastId,
             @RequestParam(value = "size", defaultValue = "10") int size){
 
-        Long searchId = (lastId == null) ? Long.MAX_VALUE : lastId;
+        Integer searchId = (lastId == null) ? Integer.MAX_VALUE : lastId;
 
         return postService.getPostList(searchId, size);
     }
 
     @GetMapping("/{postId}")
-    public PostResponseDto getPostDetail(@PathVariable Long postId){
+    public PostResponseDto getPostDetail(@PathVariable Integer postId){
         return postService.getPostDetail(postId);
     }
 
 
     @PatchMapping("/{postId}")
     public String updatePost(
-            @PathVariable Long postId,
+            @PathVariable Integer postId,
             @RequestBody PostUpdateRequestDto requestDto,
-            @SessionAttribute(name = "Login_user", required = false) Long loginUserId) {
+            @SessionAttribute(name = "Login_user", required = false) Integer loginUserId) {
 
         if (loginUserId == null) {
             throw new IllegalArgumentException("로그인이 필요한 서비스입니다.");
@@ -59,8 +59,8 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public String deletePost(@PathVariable Long postId,
-                             @SessionAttribute(name = "Login_user", required = false) Long loginUserId
+    public String deletePost(@PathVariable Integer postId,
+                             @SessionAttribute(name = "Login_user", required = false) Integer loginUserId
     ){
         postService.deletePost(postId, loginUserId);
 

@@ -21,7 +21,7 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createPost(PostRequestDto postdto, Long loginUserId){
+    public void createPost(PostRequestDto postdto, Integer loginUserId){
 
         User user = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
@@ -29,7 +29,6 @@ public class PostService {
         Post post = Post.builder()
                 .title(postdto.getTitle())
                 .body(postdto.getBody())
-                .postImageUrl(postdto.getPostImageUrl())
                 .user(user)
                 .build();
 
@@ -37,7 +36,7 @@ public class PostService {
     }
 
     @Transactional
-    public Slice<PostResponseDto> getPostList(Long lastPostId, int size) {
+    public Slice<PostResponseDto> getPostList(Integer lastPostId, int size) {
         PageRequest pageRequest = PageRequest.of(0, size);
 
         Slice<Post> postSlice = postRepository.findByIdLessThanOrderByIdDesc(lastPostId, pageRequest);
@@ -47,36 +46,35 @@ public class PostService {
                 .title(post.getTitle())
                 .authorNickname(post.getUser().getNickname())
                 .authorProfileImage(post.getUser().getProfileImageUrl())
-                .viewCount(post.getViewCount())
-                .likeCount(post.getLikeCount())
-                .replyCount(post.getReplyCount())
+                .viewCount(post.getCount() != null ? post.getCount().getViewCount() : 0)
+                .likeCount(post.getCount() != null ? post.getCount().getLikeCount() : 0)
+                .replyCount(post.getCount() != null ? post.getCount().getReplyCount() : 0)
                 .createdTime(post.getCreatedAt())
                 .build()
         );
     }
 
     @Transactional
-    public PostResponseDto getPostDetail(Long postId){
+    public PostResponseDto getPostDetail(Integer postId){
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
 
         return PostResponseDto.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
-                .body(post.getBody()) // 상세 페이지니까 본문(body) 포함!
-                .postImage(post.getPostImageUrl()) // 상세 페이지니까 이미지 포함!
+                .body(post.getBody()) // 상세 페이지니까 본문(body) 포함
                 .authorNickname(post.getUser().getNickname())
                 .authorProfileImage(post.getUser().getProfileImageUrl())
-                .viewCount(post.getViewCount())
-                .likeCount(post.getLikeCount())
-                .replyCount(post.getReplyCount())
+                .viewCount(post.getCount() != null ? post.getCount().getViewCount() : 0)
+                .likeCount(post.getCount() != null ? post.getCount().getLikeCount() : 0)
+                .replyCount(post.getCount() != null ? post.getCount().getReplyCount() : 0)
                 .createdTime(post.getCreatedAt())
                 .build();
 
     }
 
     @Transactional
-    public void deletePost(Long postId, Long loginUserId){
+    public void deletePost(Integer postId, Integer loginUserId){
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
 
@@ -89,7 +87,7 @@ public class PostService {
 
 
     @Transactional
-    public void updatePost(Long postId, PostUpdateRequestDto requestDto, Long loginUserId) {
+    public void updatePost(Integer postId, PostUpdateRequestDto requestDto, Integer loginUserId) {
 
 
         Post post = postRepository.findById(postId)
@@ -102,8 +100,7 @@ public class PostService {
 
         post.updatePost(
                 requestDto.getTitle(),
-                requestDto.getBody(),
-                requestDto.getPostImageUrl()
+                requestDto.getBody()
         );
     }
 }

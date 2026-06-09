@@ -28,14 +28,14 @@ public class UserController {
 
 
     @PatchMapping("/{userId}")
-    public String updateUserInfo(@PathVariable Long userId, @RequestBody UpdatedRequestDto updateDto, HttpServletRequest request){
+    public String updateUserInfo(@PathVariable Integer userId, @RequestBody UpdatedRequestDto updateDto, HttpServletRequest request){
 
         HttpSession session = request.getSession(false);
 
         if(session == null || session.getAttribute("Login_user")== null){
             throw new IllegalArgumentException("로그인이 필요한 서비스입니다.");
         }
-        Long loginUserId = (Long) session.getAttribute("Login_user");
+        Integer loginUserId = (Integer) session.getAttribute("Login_user");
         if (!loginUserId.equals(userId)) {
             throw new IllegalArgumentException("본인의 프로필만 수정할 수 있습니다.");
         }
@@ -45,13 +45,13 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/password")
-    public String updatePassword(@PathVariable Long userId, @RequestBody UpdatedRequestDto updateDto, HttpServletRequest request){
+    public String updatePassword(@PathVariable Integer userId, @RequestBody UpdatedRequestDto updateDto, HttpServletRequest request){
         HttpSession session = request.getSession(false);
 
         if(session == null || session.getAttribute("Login_user")== null){
             throw new IllegalArgumentException("로그인이 필요한 서비스입니다.");
         }
-        Long loginUserId = (Long) session.getAttribute("Login_user");
+        Integer loginUserId = (Integer) session.getAttribute("Login_user");
         if (!loginUserId.equals(userId)) {
             throw new IllegalArgumentException("본인의 비밀번호만 수정할 수 있습니다.");
         }
@@ -61,13 +61,13 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public String deleteUser(@PathVariable Long userId,HttpServletRequest request){
+    public String deleteUser(@PathVariable Integer userId,HttpServletRequest request){
         HttpSession session = request.getSession(false);
         if(session == null || session.getAttribute("Login_user") == null){
             throw new IllegalArgumentException("로그인이 필요한 서비스입니다.");
         }
 
-        Long loginUserId = (Long) session.getAttribute("Login_user");
+        Integer loginUserId = (Integer) session.getAttribute("Login_user");
         if (!loginUserId.equals(userId)) {
             throw new IllegalArgumentException("본인의 계정만 삭제할 수 있습니다.");
         }

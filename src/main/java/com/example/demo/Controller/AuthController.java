@@ -21,7 +21,7 @@ public class AuthController {
     public String login(@RequestBody LoginRequestDto loginDto,
                         HttpServletRequest request){
 
-        Long userId = userService.login(loginDto.getEmail(), loginDto.getPassword());
+        Integer userId = userService.login(loginDto.getEmail(), loginDto.getPassword());
 
 
         HttpSession session = request.getSession(true);

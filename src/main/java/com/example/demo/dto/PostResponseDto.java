@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostResponseDto {
 
-    private Long postId;
+    private Integer postId;
     private String title;
     private String body;
     private String postImage;
