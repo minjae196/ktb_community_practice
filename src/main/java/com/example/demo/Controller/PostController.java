@@ -25,7 +25,6 @@ public class PostController {
         postService.createPost(requestDto, loginUserId);
 
         return "게시물 생성 성공";
-
     }
 
     @GetMapping()

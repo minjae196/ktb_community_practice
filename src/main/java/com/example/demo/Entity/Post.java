@@ -20,14 +20,11 @@ public class Post {
     @Column(nullable = false)
     private String title;
 
+    @Lob
     @Column(nullable = false)
     private String body;
 
     private String postImageUrl;
-
-    private Integer likeCount = 0;
-    private Integer viewCount = 0;
-    private Integer replyCount = 0;
 
     @CreatedDate
     @Column(updatable = false)
