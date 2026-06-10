@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.User;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class UpdatedRequestDto {
+public class UserUpdatedRequestDto {
 
     @NotBlank
     @Size(max = 10)

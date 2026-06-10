@@ -1,13 +1,11 @@
 package com.example.demo.Controller;
 
-import com.example.demo.Entity.Post;
 import com.example.demo.Service.PostService;
-import com.example.demo.dto.PostRequestDto;
-import com.example.demo.dto.PostResponseDto;
-import com.example.demo.dto.PostUpdateRequestDto;
+import com.example.demo.dto.Post.PostRequestDto;
+import com.example.demo.dto.Post.PostResponseDto;
+import com.example.demo.dto.Post.PostUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

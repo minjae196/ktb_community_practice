@@ -1,11 +1,9 @@
-package com.example.demo.dto;
+package com.example.demo.dto.Post;
 
 import com.example.demo.Entity.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor

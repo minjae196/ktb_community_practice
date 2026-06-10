@@ -1,17 +1,12 @@
 package com.example.demo.Controller;
 
-import com.example.demo.dto.SignupRequestDto;
-import com.example.demo.dto.UpdatedRequestDto;
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.User.SignupRequestDto;
+import com.example.demo.dto.User.UserUpdatedRequestDto;
 import com.example.demo.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -28,7 +23,7 @@ public class UserController {
 
 
     @PatchMapping("/{userId}")
-    public String updateUserInfo(@PathVariable Integer userId, @RequestBody UpdatedRequestDto updateDto, HttpServletRequest request){
+    public String updateUserInfo(@PathVariable Integer userId, @RequestBody UserUpdatedRequestDto updateDto, HttpServletRequest request){
 
         HttpSession session = request.getSession(false);
 
@@ -45,7 +40,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/password")
-    public String updatePassword(@PathVariable Integer userId, @RequestBody UpdatedRequestDto updateDto, HttpServletRequest request){
+    public String updatePassword(@PathVariable Integer userId, @RequestBody UserUpdatedRequestDto updateDto, HttpServletRequest request){
         HttpSession session = request.getSession(false);
 
         if(session == null || session.getAttribute("Login_user")== null){

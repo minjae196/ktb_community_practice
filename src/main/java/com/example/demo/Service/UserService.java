@@ -2,8 +2,8 @@ package com.example.demo.Service;
 
 import com.example.demo.Entity.User;
 import com.example.demo.Repository.UserRepository;
-import com.example.demo.dto.SignupRequestDto;
-import com.example.demo.dto.UpdatedRequestDto;
+import com.example.demo.dto.User.SignupRequestDto;
+import com.example.demo.dto.User.UserUpdatedRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +42,7 @@ public class UserService {
 
     //유저정보 수정
     @Transactional
-    public void updateUserInfo(Integer id, UpdatedRequestDto updatedto){
+    public void updateUserInfo(Integer id, UserUpdatedRequestDto updatedto){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
@@ -52,7 +52,7 @@ public class UserService {
 
     //비밀번호 수
     @Transactional
-    public void updateUserPassword(Integer id, UpdatedRequestDto updatedto){
+    public void updateUserPassword(Integer id, UserUpdatedRequestDto updatedto){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 

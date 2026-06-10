@@ -1,13 +1,10 @@
 package com.example.demo.Controller;
 
-import com.example.demo.Entity.User;
-import com.example.demo.dto.LoginRequestDto;
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.Auth.LoginRequestDto;
 import com.example.demo.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
