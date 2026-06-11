@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.filter.CustomUserDetails;
+import com.example.demo.response.ApiResponse;
 import com.example.demo.service.ReplyService;
 import com.example.demo.dto.reply.ReplyRequestDto;
 import com.example.demo.dto.reply.ReplyResponseDto;
 import com.example.demo.dto.reply.ReplyUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +22,14 @@ public class ReplyController {
     private final ReplyService replyService;
 
     @PostMapping("/{postId}/replies")
-    public void createReply(@PathVariable Integer postId,
-                            @RequestBody ReplyRequestDto request,
-                            @AuthenticationPrincipal CustomUserDetails userDetails){
+    public ResponseEntity<ApiResponse<Void>> createReply(@PathVariable Integer postId,
+                                                   @RequestBody ReplyRequestDto request,
+                                                   @AuthenticationPrincipal CustomUserDetails userDetails){
 
         replyService.createReply(postId, request, userDetails.getUserId());
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Void>of("REPLY_CREATE_SUCCESS",null));
     }
 
     @GetMapping("/{postId}/replies")

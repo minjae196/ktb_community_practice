@@ -8,6 +8,7 @@ import com.example.demo.dto.post.PostUpdateRequestDto;
 import com.example.demo.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,8 @@ public class PostController {
 
         postService.createPost(requestDto, userDetails.getUserId());
 
-        return ResponseEntity.ok(ApiResponse.<Void>of("POST_CREATE_SUCCESS",null));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Void>of("POST_CREATE_SUCCESS",null));
     }
 
     @GetMapping()

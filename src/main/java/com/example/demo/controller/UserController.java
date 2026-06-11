@@ -6,6 +6,7 @@ import com.example.demo.dto.user.UserUpdatedRequestDto;
 import com.example.demo.service.UserService;
 import com.example.demo.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,10 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public String signUp(@RequestBody SignupRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<Void>> signUp(@RequestBody SignupRequestDto requestDto) {
         userService.SignUp(requestDto);
-        return "회원가입 성공";
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Void>of("SIGNUP_SUCCESS",null));
     }
 
 

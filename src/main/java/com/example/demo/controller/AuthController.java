@@ -6,6 +6,8 @@ import com.example.demo.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +19,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public ApiResponse<Void> login(@RequestBody LoginRequestDto loginDto,
+    public ResponseEntity<ApiResponse<Void>> login(@RequestBody LoginRequestDto loginDto,
                              HttpServletRequest request){
 
         authService.login(loginDto.getEmail(),loginDto.getPassword(),request);
 
-        return ApiResponse.of("SUCCESS",null);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Void>of("AUTH_CREATE_SUCCESS",null));
     }
 
     @DeleteMapping
