@@ -15,6 +15,7 @@ public class PostRequestDto {
     private String body;
 
     private String postImageUrl;
+
     private User author;
 
 

@@ -1,7 +1,9 @@
 package com.example.demo.response;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public class ApiResponse<T> {
 

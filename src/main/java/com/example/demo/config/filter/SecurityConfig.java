@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/{postId}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/{postId}/replies").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/users").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

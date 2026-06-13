@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.config.filter.CustomUserDetails;
 import com.example.demo.dto.user.SignupRequestDto;
+import com.example.demo.dto.user.UserResponseDto;
 import com.example.demo.dto.user.UserUpdatedRequestDto;
 import com.example.demo.service.UserService;
 import com.example.demo.response.ApiResponse;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -45,6 +48,13 @@ public class UserController {
     public ResponseEntity<ApiResponse<Void>> deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails){
         userService.deleteUser(userDetails.getUserId());
         return ResponseEntity.ok(ApiResponse.<Void>of("DELETE_SUCCESS",null));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<UserResponseDto>>> getAllUsers(){
+        List<UserResponseDto> users = userService.getAllusers();
+
+        return ResponseEntity.ok(ApiResponse.of("SUCCESS",users));
     }
 }
 

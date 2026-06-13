@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.Entity.Post;
+import com.example.demo.Entity.PostImage;
 import com.example.demo.Entity.User;
+import com.example.demo.repository.ImageRepository;
 import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.dto.post.PostRequestDto;
@@ -19,6 +21,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public void createPost(PostRequestDto postDto, Integer loginUserId){
@@ -33,6 +36,11 @@ public class PostService {
                 .build();
 
         postRepository.save(post);
+
+        if (postDto.getPostImageUrl() != null && !postDto.getPostImageUrl().isEmpty()) {
+            PostImage postImage = new PostImage(post, postDto.getPostImageUrl());
+            imageRepository.save(postImage);
+        }
     }
 
     @Transactional
