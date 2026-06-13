@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.Entity.Post;
 import com.example.demo.Entity.Reply;
 import com.example.demo.Entity.User;
+import com.example.demo.event.ReplyEvent;
 import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.ReplyRepository;
 import com.example.demo.repository.UserRepository;
@@ -10,6 +11,7 @@ import com.example.demo.dto.reply.ReplyRequestDto;
 import com.example.demo.dto.reply.ReplyResponseDto;
 import com.example.demo.dto.reply.ReplyUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ public class ReplyService {
     private final ReplyRepository replyRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     @Transactional
     public void createReply(Integer postId, ReplyRequestDto request,Integer loginUserId){
@@ -38,6 +42,8 @@ public class ReplyService {
                 .build();
 
         replyRepository.save(reply);
+
+        eventPublisher.publishEvent(new ReplyEvent(postId,true));
     }
 
     @Transactional(readOnly = true)
@@ -78,7 +84,10 @@ public class ReplyService {
             throw new IllegalArgumentException("본인이 작성한 댓글만 삭제할 수 있습니다.");
 
         }
+        Integer postId = reply.getPost().getId();
         replyRepository.delete(reply);
+
+        eventPublisher.publishEvent(new ReplyEvent(postId,false));
     }
 
 }

@@ -1,8 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.Entity.Count;
 import com.example.demo.Entity.Post;
 import com.example.demo.Entity.PostImage;
 import com.example.demo.Entity.User;
+import com.example.demo.event.PostViewEvent;
 import com.example.demo.repository.ImageRepository;
 import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.UserRepository;
@@ -10,6 +12,7 @@ import com.example.demo.dto.post.PostRequestDto;
 import com.example.demo.dto.post.PostResponseDto;
 import com.example.demo.dto.post.PostUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void createPost(PostRequestDto postDto, Integer loginUserId){
@@ -35,6 +39,14 @@ public class PostService {
                 .user(user)
                 .build();
 
+        Count count = Count.builder()
+                .post(post)
+                .viewCount(0)
+                .replyCount(0)
+                .likeCount(0)
+                .build();
+
+        post.setCount(count);
         postRepository.save(post);
 
         if (postDto.getPostImageUrl() != null && !postDto.getPostImageUrl().isEmpty()) {
@@ -43,7 +55,7 @@ public class PostService {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Slice<PostResponseDto> getPostList(Integer lastPostId, int size) {
         PageRequest pageRequest = PageRequest.of(0, size);
 
@@ -62,10 +74,12 @@ public class PostService {
         );
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public PostResponseDto getPostDetail(Integer postId){
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
+
+        eventPublisher.publishEvent(new PostViewEvent(postId));
 
         return PostResponseDto.builder()
                 .postId(post.getId())

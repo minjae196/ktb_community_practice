@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.filter.CustomUserDetails;
+import com.example.demo.service.LikeService;
 import com.example.demo.service.PostService;
 import com.example.demo.dto.post.PostRequestDto;
 import com.example.demo.dto.post.PostResponseDto;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/posts")
 public class PostController {
+
     private final PostService postService;
+    private final LikeService likeService;
 
 
     @PostMapping()
@@ -66,4 +69,16 @@ public class PostController {
 
         return ResponseEntity.ok(ApiResponse.<Void>of("POST_DELETE_SUCCESS",null));
     }
+
+    @PostMapping("/{postID}/likes")
+    public ResponseEntity<ApiResponse<Void>> toggleLike(
+            @PathVariable Integer postId,
+            @AuthenticationPrincipal CustomUserDetails userDetails){
+
+        likeService.toggleLike(postId,userDetails.getUserId());
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of("LIKE_CREATE_SUCCESS",null));
+    }
+
 }

@@ -7,6 +7,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,6 +40,8 @@ public class Post {
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Count count;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostLike> likes = new ArrayList<>();
 
     @Builder
     public Post(String title, String body,User user){
@@ -49,6 +53,10 @@ public class Post {
     public void updatePost(String title, String body) {
         this.title = title;
         this.body = body;
+    }
+
+    public void setCount(Count count) {
+        this.count = count;
     }
 
 }
