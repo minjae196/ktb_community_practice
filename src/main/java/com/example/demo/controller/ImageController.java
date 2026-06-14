@@ -27,6 +27,11 @@ public class ImageController {
             @AuthenticationPrincipal CustomUserDetails userDetails
             ){
 
+        // ImageController.java 내부
+        if (requestDTO.getFile() == null || requestDTO.getFile().isEmpty()) {
+            throw new IllegalArgumentException("첨부된 파일이 없습니다.");
+        }
+
         if (!requestDTO.isFileSizeValid()) {
             throw new IllegalArgumentException("파일 크기가 너무 큽니다 (최대 10MB).");
         }

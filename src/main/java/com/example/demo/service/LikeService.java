@@ -12,6 +12,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class LikeService {
@@ -25,18 +27,18 @@ public class LikeService {
         User user = userRepository.findById(userId).orElseThrow();
         Post post = postRepository.findById(postId).orElseThrow();
 
-        boolean isLiked = postLikeRepository.existsByUserAndPost(user,post);
+
+        Optional<PostLike> existingLike = postLikeRepository.findByUserAndPost(user, post);
 
         // 좋아요 이미 눌렀는지
-        if(isLiked){
-            postLikeRepository.deleteByUserAndPost(user,post);
+        if(existingLike.isPresent()){
+            postLikeRepository.delete(existingLike.get());
+            eventPublisher.publishEvent(new LikeEvent(postId, false));
         } else {
             PostLike postLike = new PostLike(user, post);
             postLikeRepository.save(postLike);
+            eventPublisher.publishEvent(new LikeEvent(postId,true));
         }
-
-        eventPublisher.publishEvent(new LikeEvent(postId,isLiked));
-
 
     }
 }

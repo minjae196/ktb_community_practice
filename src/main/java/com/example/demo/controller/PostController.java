@@ -70,7 +70,7 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.<Void>of("POST_DELETE_SUCCESS",null));
     }
 
-    @PostMapping("/{postID}/likes")
+    @PostMapping("/{postId}/likes")
     public ResponseEntity<ApiResponse<Void>> toggleLike(
             @PathVariable Integer postId,
             @AuthenticationPrincipal CustomUserDetails userDetails){

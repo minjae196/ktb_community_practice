@@ -28,10 +28,10 @@ public class Post {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdTime;
 
     @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -44,10 +44,11 @@ public class Post {
     private List<PostLike> likes = new ArrayList<>();
 
     @Builder
-    public Post(String title, String body,User user){
+    public Post(String title, String body,User user,LocalDateTime createdTime){
         this.title = title;
         this.body = body;
         this.user = user;
+        this.createdTime = createdTime;
     }
 
     public void updatePost(String title, String body) {

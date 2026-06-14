@@ -18,6 +18,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -37,6 +39,7 @@ public class PostService {
                 .title(postDto.getTitle())
                 .body(postDto.getBody())
                 .user(user)
+                .createdTime(LocalDateTime.now())
                 .build();
 
         Count count = Count.builder()
@@ -69,12 +72,12 @@ public class PostService {
                 .viewCount(post.getCount() != null ? post.getCount().getViewCount() : 0)
                 .likeCount(post.getCount() != null ? post.getCount().getLikeCount() : 0)
                 .replyCount(post.getCount() != null ? post.getCount().getReplyCount() : 0)
-                .createdTime(post.getCreatedAt())
+                .createdTime(post.getCreatedTime())
                 .build()
         );
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PostResponseDto getPostDetail(Integer postId){
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
@@ -85,12 +88,13 @@ public class PostService {
                 .postId(post.getId())
                 .title(post.getTitle())
                 .body(post.getBody()) // 상세 페이지니까 본문(body) 포함
+                .authorId(post.getUser().getId())
                 .authorNickname(post.getUser().getNickname())
                 .authorProfileImage(post.getUser().getProfileImageUrl())
                 .viewCount(post.getCount() != null ? post.getCount().getViewCount() : 0)
                 .likeCount(post.getCount() != null ? post.getCount().getLikeCount() : 0)
                 .replyCount(post.getCount() != null ? post.getCount().getReplyCount() : 0)
-                .createdTime(post.getCreatedAt())
+                .createdTime(post.getCreatedTime())
                 .build();
 
     }
