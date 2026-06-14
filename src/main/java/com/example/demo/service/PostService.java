@@ -62,7 +62,7 @@ public class PostService {
     public Slice<PostResponseDto> getPostList(Integer lastPostId, int size) {
         PageRequest pageRequest = PageRequest.of(0, size);
 
-        Slice<Post> postSlice = postRepository.findByIdLessThanOrderByIdDesc(lastPostId, pageRequest);
+        Slice<Post> postSlice = postRepository.findPostsWithFetchJoin(lastPostId, pageRequest);
 
         return postSlice.map(post -> PostResponseDto.builder()
                 .postId(post.getId())
