@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.filter.CustomUserDetails;
+import com.example.demo.dto.user.PasswordUpdateRequestDto;
 import com.example.demo.dto.user.SignupRequestDto;
 import com.example.demo.dto.user.UserResponseDto;
 import com.example.demo.dto.user.UserUpdatedRequestDto;
@@ -39,9 +40,9 @@ public class UserController {
     }
 
     @PutMapping("/me/password")
-    public ResponseEntity<ApiResponse<Void>> updatePassword(@Valid @RequestBody UserUpdatedRequestDto updateDto,
-                                 @AuthenticationPrincipal CustomUserDetails userDetails){
-        userService.updateUserPassword(userDetails.getUserId(),updateDto);
+    public ResponseEntity<ApiResponse<Void>> updatePassword(@Valid @RequestBody PasswordUpdateRequestDto passwordUpdateRequestDto,
+                                                            @AuthenticationPrincipal CustomUserDetails userDetails){
+        userService.updateUserPassword(userDetails.getUserId(),passwordUpdateRequestDto);
         return ResponseEntity.ok(ApiResponse.<Void>of("PASSWORD_UPDATED",null));
     }
 
@@ -57,6 +58,18 @@ public class UserController {
         List<UserResponseDto> users = userService.getAllusers();
 
         return ResponseEntity.ok(ApiResponse.of("SUCCESS",users));
+    }
+
+    @GetMapping("/email/check")
+    public ResponseEntity<ApiResponse<Boolean>> checkEmail(@RequestParam String email) {
+        boolean exists = userService.existsByEmail(email);
+        return ResponseEntity.ok(ApiResponse.of("EMAIL_CHECK_SUCCESS", !exists));
+    }
+
+    @GetMapping("/nickname/check")
+    public ResponseEntity<ApiResponse<Boolean>> checkNickname(@RequestParam String nickname) {
+        boolean exists = userService.existsByNickname(nickname);
+        return ResponseEntity.ok(ApiResponse.of("NICKNAME_CHECK_SUCCESS", !exists));
     }
 }
 

@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.config.filter.CustomUserDetails;
+import com.example.demo.dto.user.UserResponseDto;
 import com.example.demo.service.AuthService;
 import com.example.demo.dto.auth.LoginRequestDto;
 import com.example.demo.response.ApiResponse;
@@ -9,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,22 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<Void>of("AUTH_CREATE_SUCCESS",null));
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<ApiResponse<UserResponseDto>> check(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+            ){
+        UserResponseDto user = new UserResponseDto(
+                userDetails.getUser().getId(),
+                userDetails.getUser().getEmail(),
+                userDetails.getUser().getNickname(),
+                userDetails.getUser().getProfileImageUrl()
+        );
+
+        return ResponseEntity.ok(
+                ApiResponse.of("AUTH_CHECK_SUCCESS", user)
+        );
     }
 
     @DeleteMapping

@@ -30,7 +30,7 @@ public class PostService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public void createPost(PostRequestDto postDto, Integer loginUserId){
+    public Integer createPost(PostRequestDto postDto, Integer loginUserId){
 
         User user = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
@@ -50,12 +50,14 @@ public class PostService {
                 .build();
 
         post.setCount(count);
-        postRepository.save(post);
+        Post savedPost = postRepository.save(post);
 
         if (postDto.getPostImageUrl() != null && !postDto.getPostImageUrl().isEmpty()) {
             PostImage postImage = new PostImage(post, postDto.getPostImageUrl());
             imageRepository.save(postImage);
         }
+        return savedPost.getId();
+
     }
 
     @Transactional(readOnly = true)

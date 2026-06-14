@@ -25,10 +25,11 @@ public class Reply {
     private String comment;
 
     @CreatedDate
-    @Column(updatable = false)
+    @Column(name = "created_time", updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @Column(name = "updated_time")
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

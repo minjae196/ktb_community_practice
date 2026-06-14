@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 public class ReplyController {
 
@@ -52,12 +52,13 @@ public class ReplyController {
         return ResponseEntity.ok("댓글 수정 완 ");
     }
 
-    @DeleteMapping("/post/{replyId}")
+    @DeleteMapping("/{postId}/{replyId}")
     public ResponseEntity<String> deleteReply(
+            @PathVariable Integer postId,
             @PathVariable Integer replyId,
             @AuthenticationPrincipal CustomUserDetails userDetails){
 
-        replyService.deleteReply(replyId, userDetails.getUserId());
+        replyService.deleteReply(postId, replyId, userDetails.getUserId());
 
         return ResponseEntity.ok("댓글 삭제 완료.");
     }

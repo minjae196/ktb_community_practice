@@ -75,16 +75,19 @@ public class ReplyService {
     }
 
     @Transactional
-    public void deleteReply(Integer replyId,Integer loginUserId){
+    public void deleteReply(Integer postId,Integer replyId,Integer loginUserId){
 
         Reply reply = replyRepository.findById(replyId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
 
+        if (!reply.getPost().getId().equals(postId)) {
+            throw new IllegalArgumentException("해당 게시글의 댓글이 아닙니다.");
+        }
+
         if(!reply.getUser().getId().equals(loginUserId)){
             throw new IllegalArgumentException("본인이 작성한 댓글만 삭제할 수 있습니다.");
-
         }
-        Integer postId = reply.getPost().getId();
+
         replyRepository.delete(reply);
 
         eventPublisher.publishEvent(new ReplyEvent(postId,false));

@@ -25,14 +25,14 @@ public class PostController {
 
 
     @PostMapping()
-    public ResponseEntity<ApiResponse<Void>> createPost(
+    public ResponseEntity<ApiResponse<Integer>> createPost(
             @Valid @RequestBody PostRequestDto requestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        postService.createPost(requestDto, userDetails.getUserId());
+        Integer postId = postService.createPost(requestDto,userDetails.getUserId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.<Void>of("POST_CREATE_SUCCESS",null));
+                .body(ApiResponse.of("POST_CREATE_SUCCESS",postId));
     }
 
     @GetMapping()
@@ -72,14 +72,26 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/likes")
-    public ResponseEntity<ApiResponse<Void>> toggleLike(
+    public ResponseEntity<ApiResponse<Void>> addLike(
             @PathVariable Integer postId,
-            @AuthenticationPrincipal CustomUserDetails userDetails){
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        likeService.toggleLike(postId,userDetails.getUserId());
+        likeService.addLike(postId, userDetails.getUserId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.of("LIKE_CREATE_SUCCESS",null));
+                .body(ApiResponse.of("LIKE_CREATE_SUCCESS", null));
     }
+
+    @DeleteMapping("/{postId}/likes")
+    public ResponseEntity<ApiResponse<Void>> removeLike(
+            @PathVariable Integer postId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        likeService.removeLike(postId, userDetails.getUserId());
+
+        return ResponseEntity.ok(ApiResponse.of("LIKE_DELETE_SUCCESS", null)); // 삭제는 보통 200 OK
+    }
+
+
 
 }

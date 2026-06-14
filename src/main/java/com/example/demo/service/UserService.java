@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.Entity.User;
+import com.example.demo.dto.user.PasswordUpdateRequestDto;
 import com.example.demo.dto.user.UserResponseDto;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.dto.user.SignupRequestDto;
@@ -25,7 +26,12 @@ public class UserService {
        if(userRepository.existsByEmail(requestDto.getEmail())){
            throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
        }
-       if (!requestDto.getPassword().equals(requestDto.getPasswordCheck())){
+
+       if(userRepository.existsByNickname(requestDto.getNickname())){
+            throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
+       }
+
+       if(!requestDto.getPassword().equals(requestDto.getPasswordCheck())){
            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
        }
 
@@ -58,15 +64,12 @@ public class UserService {
 
     //비밀번호 수
     @Transactional
-    public void updateUserPassword(Integer id, UserUpdatedRequestDto updateDto){
+    public void updateUserPassword(Integer id, PasswordUpdateRequestDto passwordUpdateRequestDto){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        if(!updateDto.getPassword().equals(updateDto.getPasswordCheck())){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
 
-        user.updatePassword(passwordEncoder.encode(updateDto.getPassword()));
+        user.updatePassword(passwordEncoder.encode(passwordUpdateRequestDto.getPassword()));
     }
 
     @Transactional(readOnly = true)
@@ -79,6 +82,15 @@ public class UserService {
                         user.getProfileImageUrl()
                 ))
                 .collect(Collectors.toList());
+    }
+    @Transactional(readOnly = true)
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsByNickname(String nickname) {
+        return userRepository.existsByNickname(nickname);
     }
 
 }
