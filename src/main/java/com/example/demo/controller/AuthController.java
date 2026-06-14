@@ -5,6 +5,7 @@ import com.example.demo.dto.auth.LoginRequestDto;
 import com.example.demo.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> login(@RequestBody LoginRequestDto loginDto,
+    public ResponseEntity<ApiResponse<Void>> login(@Valid @RequestBody LoginRequestDto loginDto,
                              HttpServletRequest request){
 
         authService.login(loginDto.getEmail(),loginDto.getPassword(),request);

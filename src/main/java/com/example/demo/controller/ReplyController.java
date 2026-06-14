@@ -6,6 +6,7 @@ import com.example.demo.service.ReplyService;
 import com.example.demo.dto.reply.ReplyRequestDto;
 import com.example.demo.dto.reply.ReplyResponseDto;
 import com.example.demo.dto.reply.ReplyUpdateRequestDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ReplyController {
 
     @PostMapping("/{postId}/replies")
     public ResponseEntity<ApiResponse<Void>> createReply(@PathVariable Integer postId,
-                                                   @RequestBody ReplyRequestDto request,
+                                                         @Valid  @RequestBody ReplyRequestDto request,
                                                    @AuthenticationPrincipal CustomUserDetails userDetails){
 
         replyService.createReply(postId, request, userDetails.getUserId());
@@ -43,7 +44,7 @@ public class ReplyController {
     public ResponseEntity<String> updateReply(
             @PathVariable Integer postId,
             @PathVariable Integer replyId,
-            @RequestBody ReplyUpdateRequestDto request,
+            @Valid @RequestBody ReplyUpdateRequestDto request,
             @AuthenticationPrincipal CustomUserDetails userDetails){
 
         replyService.updateReply(postId, replyId, request, userDetails.getUserId());

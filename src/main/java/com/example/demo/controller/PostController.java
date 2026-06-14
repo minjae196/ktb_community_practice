@@ -7,6 +7,7 @@ import com.example.demo.dto.post.PostRequestDto;
 import com.example.demo.dto.post.PostResponseDto;
 import com.example.demo.dto.post.PostUpdateRequestDto;
 import com.example.demo.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class PostController {
 
     @PostMapping()
     public ResponseEntity<ApiResponse<Void>> createPost(
-            @RequestBody PostRequestDto requestDto,
+            @Valid @RequestBody PostRequestDto requestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         postService.createPost(requestDto, userDetails.getUserId());
@@ -53,7 +54,7 @@ public class PostController {
     @PatchMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> updatePost(
             @PathVariable Integer postId,
-            @RequestBody PostUpdateRequestDto requestDto,
+            @Valid @RequestBody PostUpdateRequestDto requestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         postService.updatePost(postId, requestDto, userDetails.getUserId());

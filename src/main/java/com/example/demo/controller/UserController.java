@@ -6,6 +6,7 @@ import com.example.demo.dto.user.UserResponseDto;
 import com.example.demo.dto.user.UserUpdatedRequestDto;
 import com.example.demo.service.UserService;
 import com.example.demo.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> signUp(@RequestBody SignupRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<Void>> signUp(@Valid  @RequestBody SignupRequestDto requestDto) {
         userService.SignUp(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<Void>of("SIGNUP_SUCCESS",null));
@@ -30,7 +31,7 @@ public class UserController {
 
 
     @PatchMapping("/me/info")
-    public ResponseEntity<ApiResponse<Void>> updateMyInfo(@RequestBody UserUpdatedRequestDto updateDto,
+    public ResponseEntity<ApiResponse<Void>> updateMyInfo(@Valid @RequestBody UserUpdatedRequestDto updateDto,
                                                          @AuthenticationPrincipal CustomUserDetails userDetails){
 
         userService.updateUserInfo(userDetails.getUserId(),updateDto);
@@ -38,7 +39,7 @@ public class UserController {
     }
 
     @PutMapping("/me/password")
-    public ResponseEntity<ApiResponse<Void>> updatePassword(@RequestBody UserUpdatedRequestDto updateDto,
+    public ResponseEntity<ApiResponse<Void>> updatePassword(@Valid @RequestBody UserUpdatedRequestDto updateDto,
                                  @AuthenticationPrincipal CustomUserDetails userDetails){
         userService.updateUserPassword(userDetails.getUserId(),updateDto);
         return ResponseEntity.ok(ApiResponse.<Void>of("PASSWORD_UPDATED",null));
@@ -50,6 +51,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.<Void>of("DELETE_SUCCESS",null));
     }
 
+    // 테스트용이기 때문에 일단 인증 안넣었음
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserResponseDto>>> getAllUsers(){
         List<UserResponseDto> users = userService.getAllusers();
