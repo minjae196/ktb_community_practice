@@ -18,10 +18,10 @@ public class SignupRequestDto {
             message = "비밀번호는 8~20자이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 이상 포함해야 합니다.")
     private String password;
 
-    @NotBlank
-    @Size(min = 8, max = 20)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()_+~`|}{꼬리표\\[\\]:;?><,./-]).{8,20}$",
-            message = "비밀번호는 8~20자이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 이상 포함해야 합니다.")
+    // @NotBlank
+    // @Size(min = 8, max = 20)
+    // @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()_+~`|}{꼬리표\\[\\]:;?><,./-]).{8,20}$",
+          //  message = "비밀번호는 8~20자이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 이상 포함해야 합니다.")
     private String passwordCheck;
 
     @NotBlank
