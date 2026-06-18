@@ -80,9 +80,16 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto getPostDetail(Integer postId){
+    public PostResponseDto getPostDetail(Integer postId, Integer currentUserId){
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
+
+        boolean isLiked = false;
+        // Post 엔티티 안에 있는 likes 리스트를 뒤져서, 현재 로그인한 유저의 ID가 있는지 확인
+        if(currentUserId != null){
+            isLiked = post.getLikes().stream()
+                    .anyMatch(like -> like.getUser().getId().equals(currentUserId));
+        }
 
         eventPublisher.publishEvent(new PostViewEvent(postId));
 
@@ -96,6 +103,7 @@ public class PostService {
                 .viewCount(post.getCount() != null ? post.getCount().getViewCount() : 0)
                 .likeCount(post.getCount() != null ? post.getCount().getLikeCount() : 0)
                 .replyCount(post.getCount() != null ? post.getCount().getReplyCount() : 0)
+                .isLiked(isLiked)
                 .createdTime(post.getCreatedTime())
                 .build();
 

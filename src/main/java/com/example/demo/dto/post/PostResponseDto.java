@@ -25,6 +25,8 @@ public class PostResponseDto {
     private int likeCount;
     private int replyCount;
 
+    private boolean isLiked;
+
     private LocalDateTime createdTime;
 
 }

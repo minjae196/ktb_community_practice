@@ -46,8 +46,13 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public PostResponseDto getPostDetail(@PathVariable Integer postId){
-        return postService.getPostDetail(postId);
+    public PostResponseDto getPostDetail(@PathVariable Integer postId,
+        @AuthenticationPrincipal CustomUserDetails userDetails){
+
+        // 로그인을 안한 사람도 볼 수 있어야하기 때문에
+        Integer userId = (userDetails != null) ? userDetails.getUserId() : null;
+
+        return postService.getPostDetail(postId,userId);
     }
 
 
