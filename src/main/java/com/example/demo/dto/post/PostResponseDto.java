@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -17,7 +18,7 @@ public class PostResponseDto {
     private Integer postId;
     private String title;
     private String body;
-    private String postImage;
+    private List<String> postImages;
     private Integer authorId;
     private String authorNickname;
     private String authorProfileImage;

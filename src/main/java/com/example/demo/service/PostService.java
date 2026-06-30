@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -93,10 +95,17 @@ public class PostService {
 
         eventPublisher.publishEvent(new PostViewEvent(postId));
 
+        List<PostImage> images = imageRepository.findByPostId(postId);
+
+        List<String> imageUrls = images.stream()
+                .map(PostImage::getPostImageUrl)
+                .collect(Collectors.toList());
+
         return PostResponseDto.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
                 .body(post.getBody()) // 상세 페이지니까 본문(body) 포함
+                .postImages(imageUrls)
                 .authorId(post.getUser().getId())
                 .authorNickname(post.getUser().getNickname())
                 .authorProfileImage(post.getUser().getProfileImageUrl())
