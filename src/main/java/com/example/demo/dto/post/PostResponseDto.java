@@ -1,5 +1,6 @@
 package com.example.demo.dto.post;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class PostResponseDto {
     private int likeCount;
     private int replyCount;
 
+    @JsonProperty("isLiked")
     private boolean isLiked;
 
     private LocalDateTime createdTime;
