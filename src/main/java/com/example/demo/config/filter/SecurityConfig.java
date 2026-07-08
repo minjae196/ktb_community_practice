@@ -25,7 +25,8 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/auth"
+            "/auth",
+            "/health"
     };
 
     @Bean
