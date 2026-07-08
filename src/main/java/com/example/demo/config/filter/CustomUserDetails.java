@@ -2,21 +2,35 @@ package com.example.demo.config.filter;
 
 import com.example.demo.Entity.User;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Collections;
 
 @Getter
-@RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    private final User user;
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    private final Integer userId;
+    private final String email;
+    private final String password;
+    private final String nickname;
+    private final String profileImageUrl;
+
+    public CustomUserDetails(User user) {
+        this.userId = user.getId();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.nickname = user.getNickname();
+        this.profileImageUrl = user.getProfileImageUrl();
+    }
 
     public Integer getUserId(){
-        return user.getId();
+        return userId;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -26,12 +40,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail(); // 로그인에 사용할 ID (이메일)
+        return email; // 로그인에 사용할 ID (이메일)
     }
 
     @Override
