@@ -36,6 +36,3 @@ out/
 ### VS Code ###
 .vscode/
 
-# DB 비밀번호 등 민감한 정보가 담긴 설정 파일 Git에서 제외
-application.yml
-application-*.yml
