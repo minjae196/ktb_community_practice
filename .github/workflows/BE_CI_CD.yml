@@ -96,7 +96,7 @@ jobs:
             # 3. 헬스 체크 (Spring Boot 부팅 시간을 고려해 재시도)
             echo "Waiting for BE servers to start..."
             HEALTH_CHECK_PASSED=false
-            for i in $(seq 1 12); do
+            for i in $(seq 1 36); do
               if curl -sSf http://localhost:8080/health > /dev/null && curl -sSf http://localhost:8081/health > /dev/null; then
                 HEALTH_CHECK_PASSED=true
                 break
