@@ -37,10 +37,10 @@ public class AuthController {
             @AuthenticationPrincipal CustomUserDetails userDetails
             ){
         UserResponseDto user = new UserResponseDto(
-                userDetails.getUser().getId(),
-                userDetails.getUser().getEmail(),
-                userDetails.getUser().getNickname(),
-                userDetails.getUser().getProfileImageUrl()
+                userDetails.getUserId(),
+                userDetails.getEmail(),
+                userDetails.getNickname(),
+                userDetails.getProfileImageUrl()
         );
 
         return ResponseEntity.ok(
