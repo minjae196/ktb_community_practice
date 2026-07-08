@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "post_count")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Count {
