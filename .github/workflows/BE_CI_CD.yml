@@ -119,4 +119,4 @@ jobs:
 
             # 4. 오래된 BE 도커 이미지 정리 (최신 2개만 유지)
             BE_IMAGE="registry.john-personalproject.xyz/backend"
-            docker images $BE_IMAGE --format '{{.CreatedAt}}\t{{.ID}}' | sort -r | awk 'NR>2 {print $2}' | xargs -r docker rmi -f
+            docker images "$BE_IMAGE" --format '{{.ID}}' | awk 'NR>2' | xargs -r docker rmi -f
