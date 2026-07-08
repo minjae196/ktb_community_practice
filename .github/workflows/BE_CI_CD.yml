@@ -1,0 +1,114 @@
+name: Backend CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # 1. 테스트 (PR, Push 모든 상황에서 실행)
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Run Tests
+        run: ./gradlew test
+
+  # 2. 빌드 및 도커 푸시 (테스트 통과 & Push 이벤트일 때만 실행)
+  build-and-push:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: 'gradle'
+
+      - name: Build without Tests (Fail-Fast)
+        run: chmod +x ./gradlew && ./gradlew build -x test
+
+      - name: Log in to Private Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.john-personalproject.xyz
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and Push BE Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            registry.john-personalproject.xyz/backend:1.${{ github.run_number }}
+  
+
+  # 3. EC2 배포 (build-and-push가 성공했을 때)
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy and Health Check via Bastion Host
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          # 백엔드 EC2 2대 접속 정보
+          host: ${{ secrets.EC2_BE_PRIVATE_IP_1 }},${{ secrets.EC2_BE_PRIVATE_IP_2 }}
+          username: ${{ secrets.EC2_BE_USERNAME }}
+          key: ${{ secrets.EC2_BE_SSH_KEY }}
+
+          # bastion host(Proxy)
+          proxy_host: ${{ secrets.BASTION_PUBLIC_IP }}
+          proxy_username: ${{ secrets.BASTION_USERNAME }}
+          proxy_key: ${{ secrets.BASTION_SSH_KEY }}
+
+          script: |
+            cd /home/${{ secrets.EC2_BE_USERNAME }}/app-stack
+
+            # 1. BE 태그 업데이트 (기존 버전을 OLD로, 새 버전을 NEW로)
+            CURRENT_TAG=$(grep "^BE_NEW_TAG=" .env | cut -d '=' -f2)
+            sed -i "s/^BE_OLD_TAG=.*/BE_OLD_TAG=$CURRENT_TAG/" .env
+            sed -i "s/^BE_NEW_TAG=.*/BE_NEW_TAG=1.${{ github.run_number }}/" .env
+
+            # 2. BE 도커 이미지 풀 및 서비스 재시작
+            docker compose pull
+            docker compose up -d
+
+            # 3. 헬스 체크 (Spring Boot 부팅 시간을 고려해 넉넉히 대기)
+            echo "Waiting for BE servers to start..."
+            sleep 20
+
+            # backend-1(8080)과 backend-2(8081) 모두 헬스 체크
+            if ! curl -sSf http://localhost:8080/health > /dev/null || ! curl -sSf http://localhost:8081/health > /dev/null; then
+              echo "BE Health Check Failed! Initiating Rollback..."
+
+              # 롤백: 이전 태그로 복구 후 재실행
+              sed -i "s/^BE_NEW_TAG=.*/BE_NEW_TAG=$CURRENT_TAG/" .env
+              docker compose up -d backend-1 backend-2
+              echo "BE Rollback completed."
+              exit 1
+            fi
+            echo "BE Health Check Passed!"
+
+            # 4. 오래된 BE 도커 이미지 정리 (최신 2개만 유지)
+            BE_IMAGE="registry.john-personalproject.xyz/backend"
+            docker images $BE_IMAGE --format '{{.CreatedAt}}\t{{.ID}}' | sort -r | awk 'NR>2 {print $2}' | xargs -r docker rmi -f
