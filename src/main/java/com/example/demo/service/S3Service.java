@@ -1,23 +1,23 @@
 package com.example.demo.service;
 
-import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.demo.dto.S3.PresignedUrlResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
 public class S3Service {
 
-    private final AmazonS3 amazonS3;
+    private final S3Presigner s3Presigner;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
@@ -27,23 +27,24 @@ public class S3Service {
         String encodedKey = encodeFileName(key);
         return PresignedUrlResponseDto.builder()
                 .name(encodedKey)
-                .url(generatePresignedUrl(encodedKey, HttpMethod.PUT))
+                .url(generatePresignedUrl(encodedKey))
                 .build();
     }
 
     // 공통 Presigned URL 생성 로직
-    private String generatePresignedUrl(String key, HttpMethod method) {
-        Date expiration = new Date();
-        expiration.setTime(expiration.getTime() + 1000 * 60 * 10); // 10분 후 만료
+    private String generatePresignedUrl(String key) {
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
 
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                new GeneratePresignedUrlRequest(bucketName, key)
-                        .withMethod(method)
-                        .withExpiration(expiration);
+        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(10))
+                .putObjectRequest(objectRequest)
+                .build();
 
-
-        URL presignedUrl = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
-        return presignedUrl.toString();
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+        return presignedRequest.url().toString();
     }
 
     // 파일 이름을 UTF-8로 인코딩
