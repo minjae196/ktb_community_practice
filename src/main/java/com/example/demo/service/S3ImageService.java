@@ -26,7 +26,7 @@ public class S3ImageService implements ImageService{
         ImageProcessor.ProcessedFiles files = imageProcessor.processImage(file,type);
 
         String uuid = UUID.randomUUID().toString();
-        String pngKey = "images/post/" + uuid + ".jpg";
+        String pngKey = "images/post/" + uuid + ".png";
         String webpKey = "images/post/" + uuid + ".webp";
 
         amazonS3.putObject(bucketName, pngKey, files.getPngFile());
