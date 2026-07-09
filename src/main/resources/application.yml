@@ -43,6 +43,9 @@ app:
 cloud:
   aws:
     s3:
-      bucket: podcast-raw-data-545122900064-ap-northeast-2-an
-    stack.auto: false
-    region.static: ap-northeast-2
+      bucket: community-image-545122900064-ap-northeast-2-an
+  stack.auto: false
+  region.static: ap-northeast-2
+  credentials:
+      accessKey: ${ACCESS_KEY}
+      secretKey: ${SECRET_ACCESS_KEY}

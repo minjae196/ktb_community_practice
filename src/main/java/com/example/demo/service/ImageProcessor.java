@@ -12,19 +12,19 @@ import java.io.IOException;
 public class ImageProcessor {
 
     public static class ProcessedFiles {
-        private File jpgFile;
+        private File pngFile;
         private File webpFile;
 
-        public File getJpgFile(){
-            return jpgFile;
+        public File getPngFile(){
+            return pngFile;
         }
 
         public File getWebpFile(){
             return webpFile;
         }
 
-        public ProcessedFiles(File jpg, File webp){
-            this.jpgFile = jpg;
+        public ProcessedFiles(File png, File webp){
+            this.pngFile = png;
             this.webpFile = webp;
         }
     }
@@ -32,14 +32,17 @@ public class ImageProcessor {
     public ProcessedFiles processImage(MultipartFile file, String type){
         try{
             BufferedImage inputImage = ImageIO.read(file.getInputStream());
+            if (inputImage == null) {
+                throw new IllegalArgumentException("지원하지 않는 이미지 형식입니다.");
+            }
 
             float quality = getCompressionQuality(type);
 
-            File jpgFile = compressToJPG(inputImage, quality);
+            File pngFile = convertToPNG(inputImage);
 
             File webpFile = convertToWebp(inputImage,quality);
 
-            return new ProcessedFiles(jpgFile,webpFile);
+            return new ProcessedFiles(pngFile,webpFile);
         } catch (IOException e){
             throw new RuntimeException("이미지 변환 실패", e);
         }
@@ -57,7 +60,14 @@ public class ImageProcessor {
         return 0.7f; // 기본값
     }
 
-    // 2. 이미지를 JPG 포맷으로 압축하여 임시 파일로 저장하는 메서드
+    // 2. 이미지를 PNG 포맷으로 변환하여 임시 파일로 저장하는 메서드
+    private File convertToPNG(BufferedImage image) throws IOException {
+        File tempFile = File.createTempFile("converted_", ".png");
+        ImageIO.write(image, "png", tempFile);
+        return tempFile;
+    }
+
+    // 3. 이미지를 JPG 포맷으로 압축하여 임시 파일로 저장하는 메서드
     private File compressToJPG(BufferedImage image, float quality) throws IOException {
         // 임시 파일 생성
         File tempFile = File.createTempFile("compressed_", ".jpg");
@@ -88,7 +98,7 @@ public class ImageProcessor {
         return tempFile;
     }
 
-    // 3. 이미지를 WebP 포맷으로 변환하여 임시 파일로 저장하는 메서드
+    // 4. 이미지를 WebP 포맷으로 변환하여 임시 파일로 저장하는 메서드
     private File convertToWebp(BufferedImage image, float quality) throws IOException {
         File tempFile = File.createTempFile("compressed_", ".webp");
 
