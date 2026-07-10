@@ -7,6 +7,7 @@ import com.example.demo.dto.post.PostRequestDto;
 import com.example.demo.dto.post.PostResponseDto;
 import com.example.demo.dto.post.PostUpdateRequestDto;
 import com.example.demo.response.ApiResponse;
+import com.example.demo.service.S3ImageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
