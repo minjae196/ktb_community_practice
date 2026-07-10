@@ -30,6 +30,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final S3ImageService s3ImageService;
 
     @Transactional
     public Integer createPost(PostRequestDto postDto, Integer loginUserId){
@@ -127,7 +128,25 @@ public class PostService {
             throw new IllegalArgumentException("본인이 작성한 게시글만 삭제할 수 있습니다.");
         }
 
+        List<String> imageKeys = post.getPostImages().stream()
+                .map(image -> {
+                    String url = image.getPostImageUrl();
+                    // "amazonaws.com/" 이후의 문자열(실제 경로 및 파일명)만 잘라내기
+                    int splitIndex = url.indexOf(".amazonaws.com/") + 15;
+                    return url.substring(splitIndex);
+                })
+                .toList();
+
         postRepository.delete(post);
+
+        for(String key : imageKeys){
+            s3ImageService.deleteFile(key);
+
+            if (key.endsWith(".webp")) {
+                String pngKey = key.replace(".webp", ".png");
+                s3ImageService.deleteFile(pngKey);
+            }
+        }
     }
 
 

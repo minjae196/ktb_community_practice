@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.parameters.P;
+import software.amazon.awssdk.services.s3.model.ReplicationTime;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,6 +41,12 @@ public class Post {
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Count count;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<PostImage> postImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Reply> replies = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostLike> likes = new ArrayList<>();
