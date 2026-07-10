@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class PostUpdateRequestDto {
@@ -15,5 +17,5 @@ public class PostUpdateRequestDto {
 
     private String body;
 
-    private String postImageUrl;
+    private List<String> postImageUrls;
 }

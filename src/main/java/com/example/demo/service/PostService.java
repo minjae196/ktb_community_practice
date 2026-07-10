@@ -162,9 +162,35 @@ public class PostService {
             throw new IllegalArgumentException("본인이 작성한 게시글만 수정할 수 있습니다.");
         }
 
+        List<String> oldImageKeys = post.getPostImages().stream()
+                .map(image -> {
+                    String url = image.getPostImageUrl();
+                    // "amazonaws.com/" 이후의 문자열(실제 경로 및 파일명)만 잘라내기
+                    int splitIndex = url.indexOf(".amazonaws.com/") + 15;
+                    return url.substring(splitIndex);
+                })
+                .toList();
+
         post.updatePost(
-                requestDto.getTitle(),
-                requestDto.getBody()
+                post.getTitle(),
+                post.getBody()
         );
+
+        imageRepository.deleteAll(post.getPostImages());
+
+        List<PostImage> newImages = requestDto.getPostImageUrls().stream()
+                .map(url -> new PostImage(post, url))
+                .toList();
+
+        imageRepository.saveAll(newImages);
+
+        for (String key : oldImageKeys) {
+            s3ImageService.deleteFile(key);
+
+            if (key.endsWith(".webp")) {
+                String pngKey = key.replace(".webp", ".png");
+                s3ImageService.deleteFile(pngKey);
+            }
+        }
     }
 }

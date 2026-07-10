@@ -42,7 +42,7 @@ public class Post {
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Count count;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     private List<PostImage> postImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
@@ -62,6 +62,11 @@ public class Post {
     public void updatePost(String title, String body) {
         this.title = title;
         this.body = body;
+    }
+
+    public void updatePostImages(List<PostImage> postImages) {
+        this.postImages.clear();
+        this.postImages.addAll(postImages);
     }
 
     public void setCount(Count count) {
