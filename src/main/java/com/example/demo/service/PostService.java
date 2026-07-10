@@ -162,29 +162,31 @@ public class PostService {
             throw new IllegalArgumentException("본인이 작성한 게시글만 수정할 수 있습니다.");
         }
 
-        List<String> oldImageKeys = post.getPostImages().stream()
-                .map(image -> {
-                    String url = image.getPostImageUrl();
-                    // "amazonaws.com/" 이후의 문자열(실제 경로 및 파일명)만 잘라내기
-                    int splitIndex = url.indexOf(".amazonaws.com/") + 15;
-                    return url.substring(splitIndex);
-                })
+        List<String> oldImageUrls = post.getPostImages().stream()
+                .map(PostImage::getPostImageUrl)
                 .toList();
 
         post.updatePost(
-                post.getTitle(),
-                post.getBody()
+                requestDto.getTitle(),
+                requestDto.getBody()
         );
 
         imageRepository.deleteAll(post.getPostImages());
 
-        List<PostImage> newImages = requestDto.getPostImageUrls().stream()
-                .map(url -> new PostImage(post, url))
-                .toList();
+        String newImageUrl = requestDto.getPostImageUrl();
+        if (newImageUrl != null && !newImageUrl.isBlank()) {
+            imageRepository.save(new PostImage(post, newImageUrl));
+        }
 
-        imageRepository.saveAll(newImages);
+        for (String oldImageUrl : oldImageUrls) {
+            if (oldImageUrl.equals(newImageUrl)) {
+                continue;
+            }
 
-        for (String key : oldImageKeys) {
+            String key = extractS3Key(oldImageUrl);
+            if (key == null) {
+                continue;
+            }
             s3ImageService.deleteFile(key);
 
             if (key.endsWith(".webp")) {
@@ -192,5 +194,18 @@ public class PostService {
                 s3ImageService.deleteFile(pngKey);
             }
         }
+    }
+
+    private String extractS3Key(String url) {
+        if (url == null || url.isBlank()) {
+            return null;
+        }
+
+        int splitIndex = url.indexOf(".amazonaws.com/");
+        if (splitIndex < 0) {
+            return null;
+        }
+
+        return url.substring(splitIndex + ".amazonaws.com/".length());
     }
 }
