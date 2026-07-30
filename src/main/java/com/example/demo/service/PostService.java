@@ -173,6 +173,8 @@ public class PostService {
 
         imageRepository.deleteAll(post.getPostImages());
 
+        post.getPostImages().clear();
+
         String newImageUrl = requestDto.getPostImageUrl();
         if (newImageUrl != null && !newImageUrl.isBlank()) {
             imageRepository.save(new PostImage(post, newImageUrl));
