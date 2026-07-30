@@ -14,7 +14,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${file.dir}")
     private String fileDir;
 
-    @Value("${app.cors.allowed-origins:http://localhost:3000,https://john-personalproject.xyz,https://www.john-personalproject.xyz}")
+    @Value("${app.cors.allowed-origins:http://localhost:3000,https://john-personalproject.xyz,https://www.john-personalproject.xyz,https://k8s.john-personalproject.xyz}")
     private String allowedOrigins;
 
     @Override
