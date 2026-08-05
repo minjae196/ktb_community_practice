@@ -56,7 +56,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus # 프로메테우스 메트릭 엔드포인트 활성화
+        include: "*" # 모든 액추에이터 엔드포인트 노출 (또는 health, metrics, prometheus만 지정 가능)
+  endpoint:
+    prometheus:
+      enabled: true
   metrics:
     tags:
-      application: my-spring-app # 어떤 앱인지 구분하기 위한 이름 (원하는 이름으로 변경)
+      application: my-spring-app # 그라파나에서 앱 이름으로 필터링할 때 쓰입니다 (원하시는 이름으로 변경 가능)
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true # P95, P99 지연 시간(Histogram) 측정 활성화 (가장 중요!)
+      percentiles:
+        http.server.requests: 0.95, 0.99 # 백분위수 명시적 계산
