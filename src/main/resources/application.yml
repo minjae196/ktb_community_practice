@@ -46,3 +46,12 @@ cloud:
       bucket: community-image-545122900064-ap-northeast-2-an
     stack.auto: false
     region.static: ap-northeast-2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus # 프로메테우스 메트릭 엔드포인트 활성화
+  metrics:
+    tags:
+      application: my-spring-app # 어떤 앱인지 구분하기 위한 이름 (원하는 이름으로 변경)
