@@ -51,6 +51,8 @@ server:
   tomcat:
     mbeanregistry:
       enabled: true
+    threads:
+      max: 1
 
 management:
   endpoints:
