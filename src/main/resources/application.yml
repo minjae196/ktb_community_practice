@@ -1,3 +1,10 @@
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true
+    threads:
+      max: ${TOMCAT_MAX_THREADS}
+
 spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL}
@@ -5,7 +12,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
     hikari:
-      maximum-pool-size: 100
+      maximum-pool-size: ${HIKARI_POOL_SIZE}
 
   jpa:
     hibernate:
@@ -18,7 +25,6 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
 
   profiles:
     active: dev
@@ -49,26 +55,19 @@ cloud:
     stack.auto: false
     region.static: ap-northeast-2
 
-server:
-  tomcat:
-    mbeanregistry:
-      enabled: true
-    threads:
-      max: 1
-
 management:
   endpoints:
     web:
       exposure:
-        include: "*" # 모든 액추에이터 엔드포인트 노출 (또는 health, metrics, prometheus만 지정 가능)
+        include: "*"
   endpoint:
     prometheus:
       enabled: true
   metrics:
     tags:
-      application: my-spring-app # 그라파나에서 앱 이름으로 필터링할 때 쓰입니다 (원하시는 이름으로 변경 가능)
+      application: my-spring-app
     distribution:
       percentiles-histogram:
-        http.server.requests: true # P95, P99 지연 시간(Histogram) 측정 활성화 (가장 중요!)
+        http.server.requests: true
       percentiles:
-        http.server.requests: 0.95, 0.99 # 백분위수 명시적 계산
+        http.server.requests: 0.95, 0.99
