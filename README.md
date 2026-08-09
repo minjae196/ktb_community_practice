@@ -66,15 +66,15 @@
     - Frontend(Nginx)와 Backend(Spring Boot) EC2 레이어를 독립 분리하여 장애 격리 및 개별 디버깅/스케일링 용이성을 확보했습니다.
     - Multi-AZ(다중 가용 영역) 배치로 단일 AZ 장애 발생 시에도 서비스 연속성을 보장합니다.
 - 비용 최적화 (Cost Optimization)
-    - NAT Gateway ➡ Bastion Host: 고비용의 AWS NAT Gateway 대신 Bastion Host를 활용하여 인프라 운영 비용을 대폭 절감했습니다.
-    - RDS ➡ 컨테이너화 MariaDB + Healthcheck: 고비용 관리형 RDS 대신 Docker MariaDB 컨테이너를 구축하고, 자체 Healthcheck 제어 스크립트를 도입하여 자동 복구 능력을 갖춘 고가용성 DB를 완성했습니다.
+    - NAT Gateway -> Bastion Host: 고비용의 AWS NAT Gateway 대신 Bastion Host를 활용하여 인프라 운영 비용을 대폭 절감했습니다.
+    - RDS -> 컨테이너화 MariaDB + Healthcheck: 고비용 관리형 RDS 대신 Docker MariaDB 컨테이너를 구축하고, 자체 Healthcheck 제어 스크립트를 도입하여 자동 복구 능력을 갖춘 고가용성 DB를 완성했습니다.
 - Redis 분산 세션 관리 (Distributed Session)
     - 이중화된 백엔드 EC2 서버 환경에서 로그인 세션 불일치 문제를 해결하기 위해 Redis 기반 세션 저장소를 연동하여 세션 정합성을 유지했습니다.
 ---
 
 ### 1.3 무중단 롤링 배포 (Zero-Downtime CI/CD)
 
-- 배포 파이프라인: GitHub Actions ➡️ Private Docker Registry ➡️ Docker Compose
+- 배포 파이프라인: GitHub Actions -> Private Docker Registry -> Docker Compose
 - 롤링 배포 & 롤백:
     - 이중화된 EC2 인스턴스를 하나씩 Rolling update하여 다운타임 0초(Zero-Downtime)를 달성했습니다.
     - 배포 직후 `/health` 엔드포인트를 검증하여 정상 응답이 없을 경우 즉시 이전 안정 버전으로 자동 롤백됩니다.
@@ -82,8 +82,8 @@
 ---
 
 ### 1.4 AWS 서버리스 영상 스트리밍 처리 파이프라인
-- **S3 + Lambda + MediaConvert 연동**:
-    - 동영상 업로드 시 S3 원본 버킷 저장 ➡️ AWS Lambda 트리거 ➡️ AWS Elemental MediaConvert를 통해 HLS(.m3u8) 스트리밍으로 자동 변환됩니다.
+- S3 + Lambda + MediaConvert 연동:
+    - 동영상 업로드 시 S3 원본 버킷 저장 -> AWS Lambda 트리거 -> AWS Elemental MediaConvert를 통해 HLS(.m3u8) 스트리밍으로 자동 변환됩니다.
     - Presigned URL 방식을 채택하여 대용량 영상 업로드 시 백엔드 서버의 트래픽/메모리 부하를 방지했습니다.
 
 ---
