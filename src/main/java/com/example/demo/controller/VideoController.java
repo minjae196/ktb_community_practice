@@ -21,6 +21,15 @@ public class VideoController {
 
     private final VideoService videoService;
 
+    @org.springframework.web.bind.annotation.GetMapping("/presigned-url")
+    public ResponseEntity<ApiResponse<Map<String, String>>> getPresignedUrl(
+            @org.springframework.web.bind.annotation.RequestParam(value = "extension", defaultValue = ".mp4") String extension) {
+
+        Map<String, String> result = videoService.getPresignedUrl(extension);
+
+        return ResponseEntity.ok(ApiResponse.of("PRESIGNED_URL_CREATE_SUCCESS", result));
+    }
+
     @PostMapping()
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadVideo(
             @RequestPart("file") MultipartFile file) throws IOException {
