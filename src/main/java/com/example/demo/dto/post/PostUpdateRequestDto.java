@@ -16,4 +16,6 @@ public class PostUpdateRequestDto {
     private String body;
 
     private String postImageUrl;
+
+    private String postVideoUrl;
 }

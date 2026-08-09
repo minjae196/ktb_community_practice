@@ -45,6 +45,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     private List<PostImage> postImages = new ArrayList<>();
 
+    @Column(length = 500)
+    private String postVideoUrl;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Reply> replies = new ArrayList<>();
 
@@ -67,6 +70,10 @@ public class Post {
     public void updatePostImages(List<PostImage> postImages) {
         this.postImages.clear();
         this.postImages.addAll(postImages);
+    }
+
+    public void updatePostVideoUrl(String postVideoUrl) {
+        this.postVideoUrl = postVideoUrl;
     }
 
     public void setCount(Count count) {

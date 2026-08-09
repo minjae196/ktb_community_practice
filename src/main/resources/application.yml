@@ -23,8 +23,8 @@ spring:
         use_sql_comments: true
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 500MB
+      max-request-size: 500MB
 
   profiles:
     active: dev
@@ -52,6 +52,7 @@ cloud:
   aws:
     s3:
       bucket: community-image-545122900064-ap-northeast-2-an
+      video-bucket: podcast-raw-data-545122900064-ap-northeast-2-an
     stack.auto: false
     region.static: ap-northeast-2
 
