@@ -24,6 +24,9 @@ public class VideoService {
     @Value("${cloud.aws.s3.video-bucket}")
     private String videoBucketName;
 
+    @Value("${cloud.aws.s3.output-bucket:podcast-media-origin-545122900064-ap-northeast-2-an}")
+    private String outputBucketName;
+
     @Value("${cloud.aws.region.static}")
     private String region;
 
@@ -51,7 +54,7 @@ public class VideoService {
 
         s3Client.putObject(request, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
-        String url = "https://" + videoBucketName + ".s3." + region + ".amazonaws.com/" + key;
+        String url = "https://" + outputBucketName + ".s3." + region + ".amazonaws.com/" + key;
 
         log.info("영상 업로드 완료: {}", url);
 
