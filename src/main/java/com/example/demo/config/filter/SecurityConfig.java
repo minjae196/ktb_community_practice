@@ -47,6 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/images").permitAll()
                         .requestMatchers(HttpMethod.POST, "/videos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/videos/presigned-url").permitAll()
+                        .requestMatchers("/s3/**").permitAll()
                         .requestMatchers("/users/email/check", "/users/nickname/check", "/users").permitAll()
                         .anyRequest().authenticated()
                 )
