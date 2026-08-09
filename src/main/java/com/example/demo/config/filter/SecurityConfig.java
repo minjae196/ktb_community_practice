@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/{postId}/replies").permitAll()
                         .requestMatchers(HttpMethod.GET,"/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/images").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/videos").permitAll()
                         .requestMatchers("/users/email/check", "/users/nickname/check", "/users").permitAll()
                         .anyRequest().authenticated()
                 )

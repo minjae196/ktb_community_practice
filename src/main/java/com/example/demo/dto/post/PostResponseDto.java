@@ -27,6 +27,8 @@ public class PostResponseDto {
     private int likeCount;
     private int replyCount;
 
+    private String postVideoUrl;
+
     @JsonProperty("isLiked")
     private boolean isLiked;
 

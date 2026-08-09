@@ -59,6 +59,11 @@ public class PostService {
             PostImage postImage = new PostImage(post, postDto.getPostImageUrl());
             imageRepository.save(postImage);
         }
+
+        if (postDto.getPostVideoUrl() != null && !postDto.getPostVideoUrl().isEmpty()) {
+            savedPost.updatePostVideoUrl(postDto.getPostVideoUrl());
+        }
+
         return savedPost.getId();
 
     }
@@ -107,6 +112,7 @@ public class PostService {
                 .title(post.getTitle())
                 .body(post.getBody()) // 상세 페이지니까 본문(body) 포함
                 .postImages(imageUrls)
+                .postVideoUrl(post.getPostVideoUrl())
                 .authorId(post.getUser().getId())
                 .authorNickname(post.getUser().getNickname())
                 .authorProfileImage(post.getUser().getProfileImageUrl())
@@ -179,6 +185,9 @@ public class PostService {
         if (newImageUrl != null && !newImageUrl.isBlank()) {
             imageRepository.save(new PostImage(post, newImageUrl));
         }
+
+        // 영상 URL 업데이트
+        post.updatePostVideoUrl(requestDto.getPostVideoUrl());
 
         for (String oldImageUrl : oldImageUrls) {
             if (oldImageUrl.equals(newImageUrl)) {
