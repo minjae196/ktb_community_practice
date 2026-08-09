@@ -19,8 +19,10 @@
     이것이 계기가 되어서 최적의 스레드 풀 및 커넥션 풀 사이즈를 수학적 접근을 통해서 명확하게 최적화를 진행하고자 했습니다.
 
 - USL(Universal Scalability Law)
-  동시 접속자가 증가할 때 발생하는 **자원 경합(Contention)**과 **동기화 오버헤드(Coherency)**를 수치화하여, '최대 처리량(Max Throughput)'을 수학적으로 예측하는 모델
+  동시 접속자가 증가할 때 발생하는 자원 경합(Contention)과 동기화 오버헤드(Coherency)를 수치화하여, '최대 처리량(Max Throughput)'을 수학적으로 예측하는 모델
+  
   $$Th(N) = \frac{\gamma \cdot N}{1 + \sigma(N-1) + \kappa \cdot N(N-1)}$$
+  
     - $N$: 스레드 풀 / 커넥션 풀 크기
     - $\sigma$: 상호작용 지연(Contention) 계수
     - $\kappa$: 컨텍스트 스위칭 오버헤드(Coherency) 계수
