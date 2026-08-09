@@ -21,13 +21,13 @@ public class VideoService {
 
     private final S3Client s3Client;
 
-    @Value("${cloud.aws.s3.video-bucket}")
+    @Value("${cloud.aws.s3.video-bucket:podcast-raw-data-545122900064-ap-northeast-2-an}")
     private String videoBucketName;
 
     @Value("${cloud.aws.s3.output-bucket:podcast-media-origin-545122900064-ap-northeast-2-an}")
     private String outputBucketName;
 
-    @Value("${cloud.aws.region.static}")
+    @Value("${cloud.aws.region.static:ap-northeast-2}")
     private String region;
 
     private static final Set<String> ALLOWED_VIDEO_EXTENSIONS = Set.of(
@@ -44,7 +44,8 @@ public class VideoService {
             throw new IllegalArgumentException("지원하지 않는 영상 형식입니다. (mp4, mov, avi, mkv, webm만 가능)");
         }
 
-        String key = "videos/" + UUID.randomUUID() + extension;
+        String fileBaseName = UUID.randomUUID().toString();
+        String key = "videos/" + fileBaseName + extension;
 
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(videoBucketName)
@@ -54,9 +55,11 @@ public class VideoService {
 
         s3Client.putObject(request, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
-        String url = "https://" + outputBucketName + ".s3." + region + ".amazonaws.com/" + key;
+        // MediaConvert HLS Output 경로: videos/{fileBaseName}/{fileBaseName}.m3u8
+        String hlsKey = "videos/" + fileBaseName + "/" + fileBaseName + ".m3u8";
+        String url = "https://" + outputBucketName + ".s3." + region + ".amazonaws.com/" + hlsKey;
 
-        log.info("영상 업로드 완료: {}", url);
+        log.info("영상 업로드 완료 (HLS): {}", url);
 
         return Map.of("videoUrl", url);
     }
