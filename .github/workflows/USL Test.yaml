@@ -1,0 +1,126 @@
+name: Backend CI/CD Pipeline (USL Test Environment)
+
+on:
+  push:
+    branches: [ "usl-test" ]
+  pull_request:
+    branches: [ "usl-test" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Run Tests
+        run: ./gradlew test
+
+  build-and-push:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: 'gradle'
+
+      - name: Build without Tests (Fail-Fast)
+        run: chmod +x ./gradlew && ./gradlew build -x test
+
+      - name: Log in to Private Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.john-personalproject.xyz
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and Push BE Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            registry.john-personalproject.xyz/backend:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy and Health Check via Bastion Host (Single Node Test)
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_BE_PRIVATE_IP_1 }}
+          username: ${{ secrets.EC2_BE_USERNAME }}
+          key: ${{ secrets.EC2_BE_SSH_KEY }}
+
+          proxy_host: ${{ secrets.BASTION_PUBLIC_IP }}
+          proxy_username: ${{ secrets.BASTION_USERNAME }}
+          proxy_key: ${{ secrets.BASTION_SSH_KEY }}
+          sync: true
+
+          script: |
+            cd /home/${{ secrets.EC2_BE_USERNAME }}/app-stack
+
+            # 1. BE 태그 업데이트
+            CURRENT_TAG=$(grep "^BE_NEW_TAG=" .env | cut -d '=' -f2)
+            sed -i "s/^BE_OLD_TAG=.*/BE_OLD_TAG=$CURRENT_TAG/" .env
+            sed -i "s/^BE_NEW_TAG=.*/BE_NEW_TAG=${{ github.sha }}/" .env
+
+            # 2. 필수 서비스들과 backend-1만 명시적으로 시작 (backend-2 제외)
+            docker compose pull
+            # 💡 [핵심] 인프라(nginx, mariadb, redis)와 backend-1을 함께 실행합니다.
+            docker compose up -d app-nginx backend-1 portainer_agent
+
+            # 3. 헬스 체크
+            echo "Waiting for backend-1 to start..."
+            sleep 60
+            HEALTH_CHECK_PASSED=false
+            for i in $(seq 1 10); do
+              if curl --connect-timeout 2 --max-time 5 -sSf http://localhost:8080/health > /dev/null; then
+                HEALTH_CHECK_PASSED=true
+                break
+              fi
+              echo "Health check attempt $i failed. Retrying in 20 seconds..."
+              sleep 20
+            done
+
+            # 4. 실패 시 로그 출력 및 단일 롤백
+            if [ "$HEALTH_CHECK_PASSED" != "true" ]; then
+              echo "BE Health Check Failed! Printing logs for debugging:"
+              docker logs --tail 50 backend-1
+              echo "Initiating Rollback for backend-1..."
+
+              sed -i "s/^BE_NEW_TAG=.*/BE_NEW_TAG=$CURRENT_TAG/" .env
+              # 💡 롤백 시에도 동일하게 필수 인프라와 backend-1만 띄웁니다.
+              docker compose up -d nginx mariadb redis backend-1
+              echo "BE Rollback completed."
+              exit 1
+            fi
+            echo "BE Health Check Passed!"
+
+            # 5. 기존 backend-2가 혹시 살아있다면 강제 종료 및 정리
+            # (운영 환경에서 넘어온 컨테이너가 남아있을 수 있으므로 확실히 정리합니다)
+            docker stop backend-2 || true
+            docker rm backend-2 || true
+
+            # 6. 오래된 BE 도커 이미지 정리 (최신 2개만 유지)
+            BE_IMAGE="registry.john-personalproject.xyz/backend"
+            docker images "$BE_IMAGE" --format '{{.ID}}' | awk 'NR>2' | xargs -r docker rmi -f
